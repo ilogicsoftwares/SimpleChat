@@ -1,0 +1,60 @@
+﻿
+@{
+    ViewBag.Title = "Chat";
+}
+<script src="https://cdn.pubnub.com/pubnub-dev.js"></script>
+
+
+<h2 class="jumbotron">@ViewBag.canal</h2>
+<div class="row">
+    <div class="col-sm-4">
+    </div>
+        <div class="col-sm-4" style="margin-left:50px">
+            <form class="form-horizontal">
+                <div class="form-group">
+                  
+                </div>
+                <div class="form-group">
+                    <textarea id="TextArea1" rows="10" cols="100" class="form-control"></textarea>
+                    <input id="Text1" type="text" class="form-control" /><input type="button" onclick="Enviar()" value="Enviar" class="btn btn-info" />
+                </div>
+            </form>
+        </div>
+    <div class="col-sm-4">
+    </div>
+    </div>
+
+
+<!-- Instantiate PubNub -->
+<script type="text/javascript">
+
+    var PUBNUB_demo = PUBNUB.init({
+        publish_key: 'pub-c-9309fef6-2800-440b-b1c9-8a924a96d7c1',
+        subscribe_key: 'sub-c-c87dd926-6413-11e6-962a-02ee2ddab7fe'
+    });
+
+    PUBNUB_demo.subscribe({
+        channel: 'Chat',
+        message: function (m) {
+            document.getElementById("TextArea1").value += (m.text) + "\n";
+            document.getElementById("Text1").value = "";
+            document.getElementById("Text1").focus();
+            document.getElementById("TextArea1").scrollTop = document.getElementById("TextArea1").scrollHeight;
+        }
+    });
+
+    function Enviar()
+    {
+        var message = document.getElementById("Text1").value;
+        
+        PUBNUB_demo.publish({
+            channel: 'Chat',
+            message: { "text":"@ViewBag.user:"+ message }
+        });
+    }
+    PUBNUB_demo.publish({
+        channel: 'Chat',
+        message: { "text": "@ViewBag.user:" + "ha entrado a la sala" }
+    });
+</script>
+
